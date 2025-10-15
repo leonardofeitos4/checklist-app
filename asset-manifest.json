@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/checklist-app/static/css/main.5151d6bd.css",
+    "main.js": "/checklist-app/static/js/main.e63902ac.js",
+    "index.html": "/checklist-app/index.html",
+    "main.5151d6bd.css.map": "/checklist-app/static/css/main.5151d6bd.css.map",
+    "main.e63902ac.js.map": "/checklist-app/static/js/main.e63902ac.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5151d6bd.css",
+    "static/js/main.e63902ac.js"
+  ]
+}
