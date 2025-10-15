@@ -14,32 +14,52 @@ function App() {
 
   // Carregar tarefas salvas ao iniciar
   useEffect(() => {
+    console.log('📂 Carregando tarefas salvas...');
     const savedTasks = loadTasks();
+    console.log(`✅ ${savedTasks.length} tarefa(s) carregada(s)`);
     setTasks(savedTasks);
   }, []);
 
   // Salvar tarefas sempre que mudarem
   useEffect(() => {
-    saveTasks(tasks);
+    if (tasks.length > 0) {
+      console.log('💾 Salvando tarefas...');
+      saveTasks(tasks);
+    }
   }, [tasks]);
 
   // Inicializar Google API ao carregar o app
   useEffect(() => {
     const initGoogle = async () => {
       try {
+        console.log('🚀 Iniciando integração com Google Calendar...');
+        console.log('⏰ Aguarde alguns segundos...');
+        
         const initialized = await initGoogleAPI();
         setGoogleApiReady(initialized);
+        
         if (initialized) {
-          console.log('✅ Google Calendar API inicializada');
+          console.log('✅ Google Calendar API inicializada com SUCESSO!');
+          console.log('🎉 Você pode adicionar tarefas ao seu calendário!');
         } else {
-          console.warn('⚠️ Google Calendar API não inicializada');
+          console.error('⚠️ Google Calendar API NÃO inicializada');
+          console.error('📋 Checklist de verificação:');
+          console.error('   1. Google Calendar API está habilitada?');
+          console.error('   2. CLIENT_ID está correto?');
+          console.error('   3. http://localhost:3000 está nas origens autorizadas?');
+          console.error('   4. Há erros específicos acima? ☝️');
+          console.error('');
+          console.error('🔗 Habilite a API aqui:');
+          console.error('   https://console.cloud.google.com/apis/library/calendar-json.googleapis.com');
         }
       } catch (error) {
-        console.error('Erro ao inicializar Google API:', error);
+        console.error('❌ ERRO CRÍTICO ao inicializar Google API:');
+        console.error(error);
       }
     };
 
-    initGoogle();
+    // Aguardar 1 segundo antes de inicializar (para garantir que gapi carregou)
+    setTimeout(initGoogle, 1000);
   }, []);
 
   const addTask = (taskText, taskDate, taskTime) => {
@@ -52,6 +72,8 @@ function App() {
         completed: false,
         createdAt: new Date().toISOString()
       };
+      
+      console.log('➕ Nova tarefa adicionada:', newTask);
       setTasks([...tasks, newTask]);
       return true;
     }
@@ -59,12 +81,14 @@ function App() {
   };
 
   const toggleTask = (id) => {
+    console.log(`🔄 Alternando status da tarefa ${id}`);
     setTasks(tasks.map(task => 
       task.id === id ? { ...task, completed: !task.completed } : task
     ));
   };
 
   const deleteTask = (id) => {
+    console.log(`🗑️ Deletando tarefa ${id}`);
     setTasks(tasks.filter(task => task.id !== id));
   };
 
@@ -100,7 +124,33 @@ function App() {
           <div className="flex items-center gap-3 mb-6">
             <Calendar className="w-8 h-8 text-indigo-600" />
             <h1 className="text-3xl font-bold text-gray-800">Meu Checklist</h1>
+            {googleApiReady ? (
+              <span className="ml-auto text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                ✅ Google Calendar Conectado
+              </span>
+            ) : (
+              <span className="ml-auto text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+                ⚠️ Google Calendar Offline
+              </span>
+            )}
           </div>
+
+          {!googleApiReady && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 rounded">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-yellow-700 font-semibold mb-1">
+                    ⚠️ Integração com Google Calendar não está ativa
+                  </p>
+                  <p className="text-yellow-600 text-sm">
+                    Verifique o console do navegador (F12) para mais detalhes. 
+                    Certifique-se de que a Google Calendar API está habilitada.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {overdueTasks > 0 && (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
