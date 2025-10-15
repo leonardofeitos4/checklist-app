@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Sistema de Checklist com integração Google Calendar",
   "private": true,
+  "homepage": "https://leonardofeitos4.github.io/checklist-app",
   "dependencies": {
     "gapi-script": "^1.2.0",
     "lucide-react": "^0.263.1",
@@ -14,7 +15,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -32,5 +35,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
   }
 }
