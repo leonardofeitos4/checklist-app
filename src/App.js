@@ -93,15 +93,25 @@ function App() {
   };
 
   const getFilteredTasks = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
+    const nowTime = new Date().toLocaleTimeString('en-CA', {
+      timeZone: 'America/Sao_Paulo',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    const nowDT = `${today}T${nowTime}`;
+
+    const toTaskDT = (t) => `${t.date}T${(t.time || '09:00')}:00`;
     
     switch(filter) {
       case 'today':
         return tasks.filter(t => t.date === today);
       case 'overdue':
-        return tasks.filter(t => t.date < today && !t.completed);
+        return tasks.filter(t => toTaskDT(t) < nowDT && !t.completed);
       case 'upcoming':
-        return tasks.filter(t => t.date > today);
+        return tasks.filter(t => toTaskDT(t) > nowDT);
       case 'completed':
         return tasks.filter(t => t.completed);
       default:
@@ -113,9 +123,19 @@ function App() {
     new Date(a.date) - new Date(b.date)
   );
 
-  const overdueTasks = tasks.filter(t => 
-    t.date < new Date().toISOString().split('T')[0] && !t.completed
-  ).length;
+  const overdueTasks = tasks.filter(t => {
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
+    const nowTime = new Date().toLocaleTimeString('en-CA', {
+      timeZone: 'America/Sao_Paulo',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    const nowDT = `${today}T${nowTime}`;
+    const taskDT = `${t.date}T${(t.time || '09:00')}:00`;
+    return taskDT < nowDT && !t.completed;
+  }).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">

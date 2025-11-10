@@ -1,15 +1,24 @@
 import React from 'react';
-import { Calendar, Trash2, Check } from 'lucide-react';
+import { CalendarPlus, Trash2, Check, Clock } from 'lucide-react';
 import { addToGoogleCalendar } from '../utils/googleCalendar';
 
 function TaskItem({ task, onToggle, onDelete }) {
   const getTaskStatus = () => {
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
-    const taskDate = task.date;
-    
+    const nowTime = new Date().toLocaleTimeString('en-CA', {
+      timeZone: 'America/Sao_Paulo',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+
+    const nowDT = `${today}T${nowTime}`; // YYYY-MM-DDTHH:mm:ss em São Paulo
+    const taskDT = `${task.date}T${(task.time || '09:00')}:00`;
+
     if (task.completed) return 'completed';
-    if (taskDate < today) return 'overdue';
-    if (taskDate === today) return 'today';
+    if (taskDT < nowDT) return 'overdue';
+    if (task.date === today) return 'today';
     return 'upcoming';
   };
 
@@ -24,11 +33,18 @@ function TaskItem({ task, onToggle, onDelete }) {
 
   const formatDate = (dateString, timeString) => {
     const dt = new Date(`${dateString}T${(timeString || '09:00')}:00`);
-    return dt.toLocaleString('pt-BR', {
-      dateStyle: 'long',
-      timeStyle: 'short',
+    const s = dt.toLocaleString('pt-BR', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
       timeZone: 'America/Sao_Paulo'
     });
+    // Remover o ponto do dia da semana curto: "dom.," -> "dom,"
+    return s.replace(/\b(\w{3})\.,/, '$1,');
   };
 
   return (
@@ -61,7 +77,7 @@ function TaskItem({ task, onToggle, onDelete }) {
           className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
           title="Adicionar ao Google Calendar"
         >
-          <Calendar className="w-5 h-5" />
+          <Clock className="w-5 h-5" />
         </button>
 
         <button
