@@ -31,6 +31,20 @@ function TaskItem({ task, onToggle, onDelete }) {
     upcoming: 'bg-white border-gray-200'
   };
 
+  const statusBadge = {
+    completed: 'bg-green-100 text-green-800 border-green-200',
+    overdue: 'bg-red-100 text-red-800 border-red-200',
+    today: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    upcoming: 'bg-gray-100 text-gray-700 border-gray-200'
+  };
+
+  const statusLabel = {
+    completed: 'Concluída',
+    overdue: 'Atrasada',
+    today: 'Hoje',
+    upcoming: 'Próxima'
+  };
+
   const formatDate = (dateString, timeString) => {
     const dt = new Date(`${dateString}T${(timeString || '09:00')}:00`);
     const s = dt.toLocaleString('pt-BR', {
@@ -62,14 +76,20 @@ function TaskItem({ task, onToggle, onDelete }) {
         </button>
         
         <div className="flex-1">
-          <p className={`font-medium ${
-            task.completed ? 'line-through text-gray-400' : 'text-gray-800'
-          }`}>
-            {task.text}
-          </p>
-          <p className="text-sm text-gray-500">
-            {formatDate(task.date, task.time)}
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className={`font-medium ${
+              task.completed ? 'line-through text-gray-400' : 'text-gray-800'
+            }`}>
+              {task.text}
+            </p>
+            <span className={`text-xs border px-2 py-1 rounded-full font-medium ${statusBadge[status]}`}>
+              {statusLabel[status]}
+            </span>
+          </div>
+          <div className="mt-1 flex items-center gap-2 text-sm text-gray-600">
+            <Clock className="w-4 h-4 opacity-80" />
+            <span>{formatDate(task.date, task.time)}</span>
+          </div>
         </div>
 
         <button
@@ -77,7 +97,7 @@ function TaskItem({ task, onToggle, onDelete }) {
           className="p-2 text-indigo-600 hover:bg-indigo-100 rounded-lg transition"
           title="Adicionar ao Google Calendar"
         >
-          <Clock className="w-5 h-5" />
+          <CalendarPlus className="w-5 h-5" />
         </button>
 
         <button
