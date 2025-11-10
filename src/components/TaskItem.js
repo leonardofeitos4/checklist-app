@@ -4,7 +4,7 @@ import { addToGoogleCalendar } from '../utils/googleCalendar';
 
 function TaskItem({ task, onToggle, onDelete }) {
   const getTaskStatus = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
     const taskDate = task.date;
     
     if (task.completed) return 'completed';
@@ -22,11 +22,12 @@ function TaskItem({ task, onToggle, onDelete }) {
     upcoming: 'bg-white border-gray-200'
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString + 'T00:00:00').toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
+  const formatDate = (dateString, timeString) => {
+    const dt = new Date(`${dateString}T${(timeString || '09:00')}:00`);
+    return dt.toLocaleString('pt-BR', {
+      dateStyle: 'long',
+      timeStyle: 'short',
+      timeZone: 'America/Sao_Paulo'
     });
   };
 
@@ -51,7 +52,7 @@ function TaskItem({ task, onToggle, onDelete }) {
             {task.text}
           </p>
           <p className="text-sm text-gray-500">
-            {formatDate(task.date)}
+            {formatDate(task.date, task.time)}
           </p>
         </div>
 
